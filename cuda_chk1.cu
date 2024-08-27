@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdio.h>
 
 // Kernel
 __global__ void cuda_hello(){
@@ -8,6 +9,8 @@ __global__ void cuda_hello(){
 
 // Main
 int main() {
+    printf("Hello World from CPU!\n");
+    
     cuda_hello<<<1,1>>>(); 
     return 0;
 }
