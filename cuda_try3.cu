@@ -10,7 +10,7 @@ __global__ void cuda_hello(){
 __global__ void VecAdd(float* A, float* B, float* C)
 {
     int i = threadIdx.x;
-    C[i] = A[i] + B[i];
+    C[i] = A[i] + B[i] + (float)i;
 }
 
 __global__ void get_idx(int n, float a, float *x, float *y)
@@ -64,7 +64,7 @@ int main() {
     for (int i = 0; i < N; i++) {
         a[i] = 1.0f;
         b[i] = 2.0f;
-        c[i] = 3.0f;
+        c[i] = 1.0f;
     }
 
     // copy arr from host to device
@@ -83,7 +83,7 @@ int main() {
 
     for (int i = 0; i < N; i++) {
         printf("%2d) a,b,c       = %f, %f, %f\n", i, a[i], b[i], c[i]);
-        printf("%2d) d_a,d_b,d_c = %f, %f, %f\n", i, d_a[i], d_b[i], d_c[i]);
+        // printf("%2d) d_a,d_b,d_c = %f, %f, %f\n", i, d_a[i], d_b[i], d_c[i]);
     }
     
     printf("End Running on CPU (Host)!\n");
