@@ -2,20 +2,9 @@
 #include <stdio.h>
 
 // Kernel
-__global__ void cuda_hello(){
-    printf("Hello World from GPU (Device)!\n");
-}
-
-// Kernel definition
-__global__ void VecAdd(float* A, float* B, float* C)
+__global__ void MatAdd(float A[N][N], float B[N][N],
+                       float C[N][N])
 {
-    int i = threadIdx.x;
-    C[i] = A[i] + B[i] + (float)i;
-}
-
-__global__ void get_idx(int n, float a, float *x, float *y)
-{
-
     int thIdx_x = threadIdx.x;
     int blIdx_x = blockIdx.x;
     int blDim_x = blockDim.x;
@@ -28,18 +17,8 @@ __global__ void get_idx(int n, float a, float *x, float *y)
     int blIdx_z = blockIdx.z;
     int blDim_z = blockDim.z;
 
-    printf("Running from GPU (Device) %d,%d,%d!\n",thIdx_x,blIdx_x,blDim_x);
-    
-    int i = thIdx_x*blIdx_x + blDim_x;
-    if (i < n){
-        x[i] = a;
-        y[i] = (float)thIdx_x;
-    }
-
-    x[0]=2.5;
-    y[0]=2.5;
+    C[thIdx_x][thIdx_y] = A[thIdx_x][thIdx_y] + B[thIdx_x][thIdx_y];
 }
-
 
 
 // Main
@@ -72,9 +51,10 @@ int main() {
     cudaMemcpy(d_b, b, N*sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_c, c, N*sizeof(float), cudaMemcpyHostToDevice);
 
-    // Kernel invocation with N threads
-    VecAdd<<<1, N>>>(a, b, c);
-    // get_idx<<<(N+255)/256, 256>>>(N, 7.5f, d_x, d_y);
+    // Kernel invocation with one block of N * N * 1 threads
+    int numBlocks = 1;
+    dim3 threadsPerBlock(N, N);
+    MatAdd<<<numBlocks, threadsPerBlock>>>(A, B, C);
 
     // copy arr from device to host
     cudaMemcpy(a, d_a, N*sizeof(float), cudaMemcpyDeviceToHost);
