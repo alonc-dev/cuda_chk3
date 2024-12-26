@@ -3,7 +3,9 @@
 
 // Kernel
 __global__ void cuda_hello(){
-    printf("Hello World from GPU (Device)!\n");
+    printf("Hello World from GPU (Device)! - ");
+    int i = blockIdx.x*blockDim.x + threadIdx.x;
+    printf("%d) ThIdx.x=%d, BlkIdx.x=%d  \n", i, threadIdx.x, blockIdx.x);
 }
 
 // Kernel definition
@@ -11,7 +13,6 @@ __global__ void VecAdd(int n, float* A, float* B, float* C)
 {
 
     int thIdx_x = threadIdx.x;
-
     printf("Running from GPU (Device %d)!\n",thIdx_x);
 
     int i = threadIdx.x;
@@ -26,6 +27,9 @@ __global__ void VecAdd(int n, float* A, float* B, float* C)
 int main() {
 
     printf("Start running on CPU (Host)!\n");
+    
+    cuda_hello<<<6, 4>>>();
+    cudaDeviceSynchronize();    
 
     int N = 1<<5;
     float *a, *b, *c;
@@ -54,6 +58,7 @@ int main() {
 
     // Kernel invocation with N threads
     VecAdd<<<1, N>>>(N, d_a, d_a, d_c);
+    cudaDeviceSynchronize();
 
     // copy arr from device to host
     cudaMemcpy(a, d_a, N*sizeof(float), cudaMemcpyDeviceToHost);
