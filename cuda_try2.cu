@@ -35,12 +35,12 @@ int main() {
     float *a, *b, *c;
     float *d_a, *d_b, *d_c;
 
-    // create x,y arr at host
+    // create a,b,c arr at host
     a = (float*)malloc(N*sizeof(float));
     b = (float*)malloc(N*sizeof(float));
     c = (float*)malloc(N*sizeof(float));
 
-    // create d_x, d_y arr at the device
+    // create d_a, d_b, d_c arr at the device
     cudaMalloc(&d_a, N*sizeof(float)); 
     cudaMalloc(&d_b, N*sizeof(float));
     cudaMalloc(&d_c, N*sizeof(float));
@@ -48,7 +48,7 @@ int main() {
     for (int i = 0; i < N; i++) {
         a[i] = 1.0f;
         b[i] = 2.0f;
-        c[i] = 1.0f;
+        c[i] = 9.0f;
     }
 
     // copy arr from host to device
